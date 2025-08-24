@@ -1,0 +1,20 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h2 class="mb-4">Dashboard</h2>
+            @if (ViewBag.User != null)
+            {
+                <p>👋 Welcome, <strong>@ViewBag.User</strong>!</p>
+                <p>Your role: <span class="badge bg-info text-dark">@ViewBag.Role</span></p>
+            }
+            else
+            {
+                <p class="text-danger">Please login or sign up first.</p>
+            }
+        </div>
+    </div>
+</div>

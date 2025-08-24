@@ -1,0 +1,25 @@
+﻿@model TicketAppMVC.Models.Event
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Title</h2>
+
+<div class="card mb-3">
+    <img src="@Model.EventImageUrl" class="card-img-top" alt="@Model.Title" />
+    <div class="card-body">
+        <p><strong>Description:</strong> @Model.Description</p>
+        <p><strong>Date:</strong> @Model.EventDate.ToString("dd MMM yyyy")</p>
+        <p><strong>Location:</strong> @Model.Location</p>
+        <p>
+            <strong>Organizer:</strong> @Model.Organizer.Username <br />
+            <img src="@Model.Organizer.ProfileImageUrl" alt="@Model.Organizer.Username" style="width:50px;height:50px;border-radius:50%;" />
+        </p>
+        <p>
+            <strong>Price:</strong> $@Model.Price <br />
+            <strong>Tickets Bought:</strong> <span class="text-success">@Model.SoldTickets</span><br />
+            <strong>Tickets Left:</strong> <span class="text-danger">@Model.TotalTickets - @Model.SoldTickets</span>
+        </p>
+        <a href="#" class="btn btn-primary">Add Tickets</a>
+    </div>
+</div>

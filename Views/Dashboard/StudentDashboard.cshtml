@@ -1,0 +1,70 @@
+﻿@model List<TicketAppMVC.Models.Event>
+@using TicketAppMVC.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Upcoming Events</h2>
+
+<div class="row">
+    @foreach (var ev in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <img src="@ev.EventImageUrl" class="card-img-top" alt="@ev.Title" />
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        <a href="@Url.Action("EventDetails", "Dashboard", new { id = ev.Id })">
+                            @ev.Title
+                        </a>
+                    </h5>
+
+
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="@ev.Organizer.ProfileImageUrl " class="rounded-circle" style="width:40px; height:40px; object-fit:cover; margin-right:10px;" alt="@ev.Organizer.Username" />
+                        <span>@ev.Organizer.Username</span>
+                    </div>
+
+                    <p class="card-text">@ev.Description</p>
+
+
+                    <p class="card-text"><strong>Price:</strong> @String.Format("R {0:N2}", ev.Price)</p>
+
+
+
+                    <p class="card-text">
+                        <strong>Tickets Bought:</strong> <span class="text-success">@ev.SoldTickets</span><br />
+                        <strong>Tickets Left:</strong> <span class="text-danger">@(ev.TotalTickets - ev.SoldTickets)</span>
+                    </p>
+
+
+                    <div class="d-flex mb-2">
+                        <button class="btn btn-outline-secondary btn-sm me-2" onclick="decreaseTicket(@ev.Id)">-</button>
+                        <input type="number" id="qty-@ev.Id" value="1" min="1" max="@(ev.TotalTickets - ev.SoldTickets)" class="form-control form-control-sm text-center" style="width:60px;" />
+                        <button class="btn btn-outline-secondary btn-sm ms-2" onclick="increaseTicket(@ev.Id, @(ev.TotalTickets - ev.SoldTickets))">+</button>
+                    </div>
+
+
+                    <div class="d-flex justify-content-between">
+                        <a href="@Url.Action("EventDetails", "Dashboard", new { id = ev.Id })" class="btn btn-info btn-sm">Location</a>
+                        <button class="btn btn-primary btn-sm">Add Tickets</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+<script>
+    function decreaseTicket(id) {
+        var input = document.getElementById('qty-' + id);
+        if (input.value > 1) input.value--;
+    }
+
+    function increaseTicket(id, max) {
+        var input = document.getElementById('qty-' + id);
+        if (input.value < max) input.value++;
+    }
+</script>
