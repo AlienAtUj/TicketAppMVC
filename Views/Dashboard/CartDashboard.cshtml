@@ -1,0 +1,150 @@
+﻿@model List<TicketAppMVC.Models.CartItemSession>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3">🛒 My Cart</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            Your cart is empty. <a href="@Url.Action("StudentDashboard","Dashboard")">Browse events</a> to add tickets.
+        </div>
+    }
+    else
+    {
+        <form method="post" action="@Url.Action("CartDashboardAction", "Dashboard")" id="cartForm">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event</th>
+                        <th>Price (R)</th>
+                        <th>Quantity</th>
+                        <th>Subtotal (R)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        var item = Model[i];
+                        <tr data-item-id="@item.CartItemId" data-price="@item.Price">
+                            <td>@item.EventTitle</td>
+                            <td>@item.Price.ToString("0.00")</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="changeQty(@i, -1)">−</button>
+
+                                    <input type="hidden" name="cartItems[@i].CartItemId" value="@item.CartItemId" />
+                                    <input id="qty-@i" name="cartItems[@i].Quantity" type="number"
+                                           min="1" max="10" value="@item.Quantity"
+                                           class="form-control form-control-sm text-center"
+                                           style="width:60px;" readonly>
+
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="changeQty(@i, 1)">+</button>
+                                </div>
+                            </td>
+                            <td id="subtotal-@i" class="subtotal">@((item.Price * item.Quantity).ToString("0.00"))</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(@item.CartItemId, '@item.EventTitle')">Remove</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="mt-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Total: R</strong><span id="totalAmount">@(Model.Sum(item => item.Price * item.Quantity).ToString("0.00"))</span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <!-- Save Changes -->
+                    <button type="submit" name="actionType" value="save" class="btn btn-success">Save Changes</button>
+
+                    <!-- Proceed Payment -->
+                    <button type="submit" name="actionType" value="pay" class="btn btn-primary">Proceed Payment</button>
+                </div>
+            </div>
+        </form>
+    }
+</div>
+
+@section scripts {
+    <script>
+        function changeQty(index, delta) {
+            var qtyInput = document.getElementById('qty-' + index);
+            var currentQty = parseInt(qtyInput.value);
+            var newQty = currentQty + delta;
+            var max = parseInt(qtyInput.getAttribute('max'));
+            var min = parseInt(qtyInput.getAttribute('min'));
+
+            if (newQty >= min && newQty <= max) {
+                qtyInput.value = newQty;
+                updateSubtotal(index);
+                updateTotal();
+            }
+        }
+
+        function updateSubtotal(index) {
+            var qtyInput = document.getElementById('qty-' + index);
+            var quantity = parseInt(qtyInput.value);
+            var row = qtyInput.closest('tr');
+            var price = parseFloat(row.getAttribute('data-price'));
+
+            var subtotalElement = document.getElementById('subtotal-' + index);
+            subtotalElement.textContent = (quantity * price).toFixed(2);
+        }
+
+        function updateTotal() {
+            var subtotals = document.querySelectorAll('.subtotal');
+            var total = 0;
+            subtotals.forEach(e => total += parseFloat(e.textContent));
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+        }
+
+        function removeItem(ticketId, eventTitle) {
+            if (confirm('Are you sure you want to remove "' + eventTitle + '" from your cart?')) {
+                fetch('/Dashboard/DeleteCart?eventTitle=' + encodeURIComponent(eventTitle), { method: 'GET' })
+                    .then(response => {
+                        if (response.ok) {
+                            var row = document.querySelector('tr[data-item-id="' + ticketId + '"]');
+                            if (row) {
+                                row.remove();
+                                updateTotal();
+                            }
+                        } else {
+                            alert("Failed to remove item from cart.");
+                        }
+                    })
+                    .catch(() => alert("Network error. Try again."));
+            }
+        }
+
+        // Ctrl+S / Cmd+S triggers Save
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                document.querySelector('button[name="actionType"][value="save"]').click();
+            }
+        });
+    </script>
+
+    <style>
+        .subtotal {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+            input[type="number"]::-webkit-outer-spin-button,
+            input[type="number"]::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+    </style>
+}

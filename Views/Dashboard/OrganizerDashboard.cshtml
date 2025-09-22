@@ -1,0 +1,70 @@
+﻿@model List<TicketAppMVC.Models.Event>
+@{
+    Layout = "~/Views/Shared/OrganizerLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">My Events</h2>
+    <a class="btn btn-success" href="@Url.Action("CreateEvent", "ManageEvents")">+ Create Event</a>
+</div>
+
+<div class="row g-4">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="col-12">
+            <div class="alert alert-info">You haven’t created any events yet.</div>
+        </div>
+    }
+    else
+    {
+        foreach (var ev in Model)
+        {
+            var soldTickets = ev.TotalTickets - ev.AvailableTickets;
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card shadow-sm h-100 border-0 rounded-3">
+                    <a href="@Url.Action("EventManagement","ManageEvents", new { id = ev.Id })">
+                        <img src="@ev.EventImageUrl" alt="@ev.Title"
+                             class="card-img-top" style="height:200px;object-fit:cover;" />
+                    </a>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-semibold">
+                                <a href="@Url.Action("EventManagement","ManageEvents", new { id = ev.Id })"
+                                   class="text-decoration-none text-dark">
+                                    @ev.Title
+                                </a>
+                            </h5>
+                            <span class="badge bg-primary">@ev.EventDate.ToString("dd MMM")</span>
+                        </div>
+
+                        <p class="text-muted small mb-2">@ev.Location</p>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span class="text-success fw-bold">@soldTickets</span>
+                                <span class="text-muted small"> sold</span>
+                            </div>
+                            <div>
+                                <span class="text-danger fw-bold">@ev.AvailableTickets</span>
+                                <span class="text-muted small"> left</span>
+                            </div>
+                        </div>
+                        <p class="card-text"><strong>Price:</strong> @String.Format("R {0:N2}", ev.Price)</p>
+
+                        <div class="mt-auto d-flex gap-2">
+                            <a class="btn btn-outline-primary btn-sm w-50"
+                               href="@Url.Action("Edit","ManageEvents", new { id = ev.Id })">Edit</a>
+                            <a class="btn btn-outline-secondary btn-sm w-50"
+                               href="@Url.Action("ViewAttendees","ManageEvents", new { id = ev.Id })">Attendees</a>
+                        </div>
+                        <form method="post" action="@Url.Action("Delete","ManageEvents", new { id = ev.Id })"
+                              onsubmit="return confirm('Are you sure you want to delete this event?');"
+                              class="mt-2">
+                            <button class="btn btn-danger btn-sm w-100">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

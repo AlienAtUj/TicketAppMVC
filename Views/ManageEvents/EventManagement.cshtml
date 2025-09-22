@@ -1,0 +1,21 @@
+﻿@model TicketAppMVC.Models.Event
+@{
+    Layout = "~/Views/Shared/OrganizerLayout.cshtml";
+}
+
+<h2>@Model.Title</h2>
+
+<div>
+    <img src="@Model.EventImageUrl" alt="@Model.Title" style="width:100%;max-width:400px;" />
+</div>
+
+<p><strong>Description:</strong> @Model.Description</p>
+<p><strong>Date:</strong> @Model.EventDate.ToString("dd MMM yyyy")</p>
+<p><strong>Location:</strong> @Model.Location</p>
+<p><strong>Price:</strong> R @Model.Price.ToString("N2")</p>
+
+@{
+    var soldTickets = Model.TotalTickets - Model.AvailableTickets;
+}
+
+<p><strong>Tickets Sold:</strong> @soldTickets / @Model.TotalTickets</p>

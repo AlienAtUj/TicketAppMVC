@@ -18,6 +18,20 @@
                             <input type="email" name="email" class="form-control" required />
                         </div>
                         <div class="mb-3">
+                            <label class="form-label d-block">Gender</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="Gender" id="male" value="Male" autocomplete="off" required>
+                                <label class="btn btn-outline-primary" for="male">Male</label>
+
+                                <input type="radio" class="btn-check" name="Gender" id="female" value="Female" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="female">Female</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Age</label>
+                            <input type="number" name="age" class="form-control" min="0" max="120" required />
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Password</label>
                             <input type="password" name="password" class="form-control" required />
                         </div>
@@ -30,10 +44,10 @@
                             <select name="role" class="form-select" required>
                                 <option value="" disabled selected>-- Choose Role --</option>
                                 <option value="Student">Student</option>
-                                <option value="Admin">Admin</option>
+                                <option value="Organizer">Organizer</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-success w-100">Sign Up</button>
+                        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
                     </form>
                     <div class="text-center mt-3">
                         <p>Already have an account? <a href="/Account/Login">Login here</a></p>

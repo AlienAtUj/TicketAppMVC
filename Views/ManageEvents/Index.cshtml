@@ -1,0 +1,163 @@
+﻿@model List<TicketAppMVC.Models.Event>
+@{
+    ViewBag.Title = "Manage Events";
+    Layout = "~/Views/Shared/OrganizerLayout.cshtml";
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .btn:hover {
+                background-color: #0056b3;
+            }
+
+        .gridview {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+            .gridview th, .gridview td {
+                padding: 10px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+
+            .gridview th {
+                background-color: #f8f9fa;
+                font-weight: bold;
+            }
+
+            .gridview tr:nth-child(even) {
+                background-color: #f8f9fa;
+            }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Manage Events</h2>
+
+        <form method="post" action="@Url.Action("CreateEvent","ManageEvents")" enctype="multipart/form-data">
+            <div style="margin-bottom:20px;">
+                <h3>Add New Event</h3>
+                <div class="form-group">
+                    <input type="text" name="Title" placeholder="Event Title" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <textarea name="Description" placeholder="Description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="Location" placeholder="Location" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="datetime-local" name="EventDate" placeholder="Event Date" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <input type="number" name="TotalTickets" placeholder="Total Tickets" class="form-control" min="1" />
+                </div>
+                <div class="form-group">
+                    <input type="number" name="Price" placeholder="Price" class="form-control" step="0.01" min="0" />
+                </div>
+                <div class="form-group">
+                    <label>Event Image</label>
+                    <input type="file" name="EventImage" class="form-control" />
+                </div>
+                <button type="submit" class="btn">Add Event</button>
+            </div>
+        </form>
+
+        <h3>Your Events</h3>
+        <table class="gridview">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                    <th>Event Date</th>
+                    <th>Total Tickets</th>
+                    <th>Available Tickets</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ev in Model)
+                {
+                    <tr>
+                        <td>@ev.Id</td>
+                        <td>@ev.Title</td>
+                        <td>@ev.Description</td>
+                        <td>@ev.Location</td>
+                        <td>@ev.EventDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@ev.TotalTickets</td>
+                        <td>@ev.AvailableTickets</td>
+                        <td>R @ev.Price.ToString("N2")</td>
+                        <td>
+                            <a href="@Url.Action("Edit", "ManageEvents", new { id = ev.Id })" class="btn btn-sm btn-primary">Edit</a>
+
+                            @using (Html.BeginForm("Delete", "ManageEvents", FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to delete this event?');" }))
+                            {
+                                @Html.AntiForgeryToken() 
+                                <input type="hidden" name="id" value="@ev.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

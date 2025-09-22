@@ -1,0 +1,50 @@
+﻿@model List<TicketAppMVC.Models.Ticket>
+@{
+    Layout = "~/Views/Shared/OrganizerLayout.cshtml";
+    var events = ViewBag.Events as List<TicketAppMVC.Models.Event>;
+    int? selectedEventId = ViewBag.SelectedEventId as int?;
+}
+
+<h2 class="fw-bold">Event Attendees</h2>
+
+<form method="get" action="@Url.Action("ViewAttendees", "ManageEvents")">
+    <select name="eventId" onchange="this.form.submit()" class="form-select mb-3" style="width:300px">
+        <option value="">-- Select Event --</option>
+        @foreach (var ev in events)
+        {
+            <option value="@ev.Id" @(selectedEventId == ev.Id ? "selected" : "")>@ev.Title</option>
+        }
+    </select>
+</form>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">No attendees found for the selected event.</div>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Attendee Name</th>
+                <th>Email</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Booking Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>@ticket.User.Username</td>
+                    <td>@ticket.User.Email</td>
+                    <td>@ticket.Quantity</td>
+                    <td>R @ticket.TotalPrice.ToString("N2")</td>
+                    <td>@ticket.BookingDate.ToString("MMM dd, yyyy hh:mm tt")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

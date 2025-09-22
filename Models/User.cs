@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TicketAppMVC.Models
@@ -8,13 +11,13 @@ namespace TicketAppMVC.Models
         [Key]
         public int Id { get; set; }
 
-        [Required, MaxLength(50)]
+        [Required, StringLength(50)]
         public string Username { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required, StringLength(100)]
         public string Email { get; set; }
 
-        [Required]
+        [Required, StringLength(256)]
         public string PasswordHash { get; set; }
 
         [Required]
@@ -23,7 +26,14 @@ namespace TicketAppMVC.Models
         [ForeignKey("RoleId")]
         public virtual Role Role { get; set; }
 
-        [MaxLength(200)]
         public string ProfileImageUrl { get; set; }
+
+        // Navigation
+        public virtual ICollection<Event> Events { get; set; }
+        public virtual ICollection<Cart> Carts { get; set; }
+        public virtual ICollection<TicketType> Tickets { get; set; }
+        public virtual ICollection<Invoice> Invoices { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; }
+        public object RegisteredAt { get; internal set; }
     }
 }

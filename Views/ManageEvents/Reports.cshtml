@@ -1,0 +1,144 @@
+﻿@model Tuple<List<TicketAppMVC.Models.EventReportDto>, List<TicketAppMVC.Models.UserReportDto>>
+
+@{
+    ViewBag.Title = "Reports Dashboard";
+    Layout = "~/Views/Shared/OrganizerLayout.cshtml";
+    var events = Model.Item1;
+    var users = Model.Item2;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reports Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f9f9f9;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Tickets Sold per Event</h2>
+        <canvas id="eventChart" height="100"></canvas>
+        <table>
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Total Tickets</th>
+                    <th>Sold Tickets</th>
+                    <th>Remaining</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ev in events)
+                {
+                    <tr>
+                        <td>@ev.EventName</td>
+                        <td>@ev.TotalTickets</td>
+                        <td>@ev.SoldTickets</td>
+                        <td>@ev.TicketsRemaining</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <h2>Tickets Bought per User</h2>
+        <canvas id="userChart" height="100"></canvas>
+        <table>
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>Tickets Bought</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in users)
+                {
+                    <tr>
+                        <td>@user.UserName</td>
+                        <td>@user.TicketsBought</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Event Chart
+        var ctx1 = document.getElementById('eventChart').getContext('2d');
+        var eventChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(events.Select(e => e.EventName))),
+                datasets: [
+                    {
+                        label: 'Sold Tickets',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(events.Select(e => e.SoldTickets))),
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                    },
+                    {
+                        label: 'Remaining Tickets',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(events.Select(e => e.TicketsRemaining))),
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                    }
+                ]
+            }
+        });
+
+        // User Chart
+        var ctx2 = document.getElementById('userChart').getContext('2d');
+        var userChart = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(users.Select(u => u.UserName))),
+                datasets: [{
+                    label: 'Tickets Bought',
+                    data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(users.Select(u => u.TicketsBought))),
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(255, 159, 64, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 205, 86, 0.6)',
+                        'rgba(201, 203, 207, 0.6)'
+                    ]
+                }]
+            }
+        });
+    </script>
+</body>
+</html>

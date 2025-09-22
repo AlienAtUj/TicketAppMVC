@@ -1,25 +1,68 @@
 ﻿@model TicketAppMVC.Models.Event
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var left = Model.AvailableTickets;
+    var soldTickets = Model.TotalTickets - Model.AvailableTickets;
 }
 
-<h2>@Model.Title</h2>
+<div class="row g-4">
+    <div class="col-12 col-lg-7">
+        <div class="event-card">
+            <img src="@Model.EventImageUrl" alt="@Model.Title" class="event-thumb" />
+            <div class="event-body">
+                <h2 class="mb-1">@Model.Title</h2>
+                <div class="text-muted mb-3">@Model.EventDate.ToString("dddd, dd MMM yyyy • HH:mm") · @Model.Location</div>
+                <p class="mb-3">@Model.Description</p>
+                <div class="d-flex gap-4 mb-3">
+                    <div class="stat"><span class="dot dot-green"></span><span class="text-success fw-semibold">@soldTickets </span><span class="text-muted">sold</span></div>
+                    <div class="stat"><span class="dot dot-red"></span><span class="text-danger fw-semibold">@left</span><span class="text-muted">left</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-5">
+        <div class="event-card">
+            <div class="event-body">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <img src="@Model.Organizer.ProfileImageUrl" alt="@Model.Organizer.Username"
+                         style="width:56px;height:56px;border-radius:999px;object-fit:cover;">
+                    <div>
+                        <div class="fw-semibold">@Model.Organizer.Username</div>
+                        <div class="text-muted small">Organizer</div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="small text-muted">Price</div>
+                    <div class="h5 mb-0">R @String.Format("{0:N2}", Model.Price)</div>
+                </div>
 
-<div class="card mb-3">
-    <img src="@Model.EventImageUrl" class="card-img-top" alt="@Model.Title" />
-    <div class="card-body">
-        <p><strong>Description:</strong> @Model.Description</p>
-        <p><strong>Date:</strong> @Model.EventDate.ToString("dd MMM yyyy")</p>
-        <p><strong>Location:</strong> @Model.Location</p>
-        <p>
-            <strong>Organizer:</strong> @Model.Organizer.Username <br />
-            <img src="@Model.Organizer.ProfileImageUrl" alt="@Model.Organizer.Username" style="width:50px;height:50px;border-radius:50%;" />
-        </p>
-        <p>
-            <strong>Price:</strong> $@Model.Price <br />
-            <strong>Tickets Bought:</strong> <span class="text-success">@Model.SoldTickets</span><br />
-            <strong>Tickets Left:</strong> <span class="text-danger">@Model.TotalTickets - @Model.SoldTickets</span>
-        </p>
-        <a href="#" class="btn btn-primary">Add Tickets</a>
+                <div class="d-flex align-items-center gap-2 qty mb-3">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="stepQty('details',-1)">−</button>
+                    <input id="qty-details" type="number" min="1" max="@left" value="1" class="form-control form-control-sm">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="stepQty('details',1)">+</button>
+                </div>
+
+                <form method="post" action="@Url.Action("Add","Cart")" class="d-grid gap-2">
+                    <input type="hidden" name="eventId" value="@Model.Id" />
+                    <input type="hidden" name="quantity" id="post-qty-details" value="1" />
+                    <button class="btn btn-accent btn-lg">Add tickets</button>
+                    <a class="btn btn-outline-primary" href="#">View location</a>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+
+@section scripts{
+    <script>
+function stepQty(id, delta){
+  var el = document.getElementById('qty-' + id);
+  if(!el) el = document.getElementById('qty-details');
+  var max = parseInt(el.getAttribute('max') || '99', 10);
+  var v = Math.max(1, Math.min(max, (parseInt(el.value || '1',10) + delta)));
+  el.value = v;
+  var post = document.getElementById('post-qty-' + id) || document.getElementById('post-qty-details');
+  if(post) post.value = v;
+}
+    </script>
+}

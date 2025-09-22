@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,21 +11,41 @@ namespace TicketAppMVC.Models
         public int Id { get; set; }
 
         [Required]
-        public int EventId { get; set; }  // FK to Event
+        public int EventId { get; set; }
 
         [ForeignKey("EventId")]
         public virtual Event Event { get; set; }
 
         [Required]
-        public int UserId { get; set; }  // FK to User (student)
+        public int UserId { get; set; }
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
 
-        [Required]
-        public int Quantity { get; set; }   // How many tickets student bought
+        public int? TicketTypeId { get; set; }
+
+        [ForeignKey("TicketTypeId")]
+        public virtual TicketType TicketType { get; set; }
+
+        [Required, StringLength(50)]
+        public string TicketCode { get; set; }
+
+        public int? InvoiceId { get; set; }
+
+        [ForeignKey("InvoiceId")]
+        public virtual Invoice Invoice { get; set; }
+
+        public DateTime BookingDate { get; set; }
+        public DateTime ModifiedAt { get; set; }
 
         [Required]
-        public DateTime PurchaseDate { get; set; } = DateTime.Now; // default to now
+        public int Quantity { get; set; }
+
+        [Required]
+        public decimal TotalPrice { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public string QRCodeUrl { get; set; }
     }
 }

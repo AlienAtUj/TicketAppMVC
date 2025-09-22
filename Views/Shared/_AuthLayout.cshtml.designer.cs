@@ -8,9 +8,9 @@
 //------------------------------------------------------------------------------
 
 
-namespace TicketAppMVC.Views.Dashboard
+namespace TicketAppMVC.Views.Shared
 {
-    public partial class AdminDashboard
+    public partial class _AuthLayout
     {
 
         /// <summary>

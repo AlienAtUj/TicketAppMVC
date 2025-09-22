@@ -1,0 +1,164 @@
+﻿@model List<TicketAppMVC.Models.TicketViewModel>
+@{
+    ViewBag.Title = "My Tickets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">🎫 My Tickets</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-ticket-alt fa-3x mb-3" style="color: #6c757d;"></i>
+            <h4>No tickets purchased yet</h4>
+            <p>You haven't purchased any tickets. <a href="@Url.Action("StudentDashboard", "Dashboard")" class="alert-link">Browse events</a> to get started!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var ticket in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card ticket-card h-100" style="border: 1px solid #dee2e6; border-radius: 10px;">
+                        <div class="card-header" style="background-color: #007bff; color: white;">
+                            <h5 class="card-title mb-0" style="font-size: 1.1rem;">@ticket.EventTitle</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- QR Code -->
+                            <div class="text-center mb-3">
+                                <img src="@ticket.QRCodeUrl" alt="QR Code" style="max-width: 150px; border: 2px solid #f8f9fa; border-radius: 8px; padding: 5px; background: white;">
+                                <p class="text-muted small mt-2">Ticket Code: @ticket.TicketCode</p>
+                            </div>
+
+                            <!-- Event Details -->
+                            <div class="ticket-details">
+                                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                    <span style="width: 20px; margin-right: 10px; color: #6c757d;">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                    </span>
+                                    <span>@ticket.EventDate.ToString("f")</span>
+                                </div>
+                                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                    <span style="width: 20px; margin-right: 10px; color: #6c757d;">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </span>
+                                    <span>@ticket.Location</span>
+                                </div>
+                                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                    <span style="width: 20px; margin-right: 10px; color: #6c757d;">
+                                        <i class="fa-solid fa-user"></i>
+                                    </span>
+                                    <span>Organizer: @ticket.OrganizerName</span>
+                                </div>
+                                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                    <span style="width: 20px; margin-right: 10px; color: #6c757d;">
+                                        <i class="fa-solid fa-cart-shopping"></i>
+                                    </span>
+                                    <span>Purchased: @ticket.BookingDate.ToString("MMM dd, yyyy")</span>
+                                </div>
+                            </div>
+
+
+                            <!-- Price and Quantity -->
+                            <div style="display: flex; justify-content: between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                                <div>
+                                    <span class="text-muted">@ticket.Quantity x </span>
+                                    <strong class="text-success">R@(ticket.Price.ToString("0.00"))</strong>
+                                </div>
+                                <span class="badge" style="background-color: #17a2b8; color: white;">
+                                    @ticket.Quantity Ticket@(ticket.Quantity > 1 ? "s" : "")
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-footer" style="background-color: #f8f9fa;">
+                            <div style="display: flex; justify-content: between;">
+                                <small class="text-muted">Ref: #@ticket.Id</small>
+                                <button class="btn btn-sm btn-outline-primary" onclick="downloadTicket('@ticket.Id')">
+                                    📥 Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ticket Summary</h5>
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div style="padding: 15px;">
+                                    <h3 style="color: #007bff; margin: 0; font-weight: bold;">@Model.Count</h3>
+                                    <p class="text-muted">Total Tickets</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div style="padding: 15px;">
+                                    <h3 style="color: #28a745; margin: 0; font-weight: bold;">R@(Model.Sum(t => t.Price * t.Quantity).ToString("0.00"))</h3>
+                                    <p class="text-muted">Total Spent</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div style="padding: 15px;">
+                                    <h3 style="color: #17a2b8; margin: 0; font-weight: bold;">@Model.Select(t => t.EventTitle).Distinct().Count()</h3>
+                                    <p class="text-muted">Different Events</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div style="padding: 15px;">
+                                    <h3 style="color: #ffc107; margin: 0; font-weight: bold;">@Model.Max(t => t.BookingDate).ToString("MMM yyyy")</h3>
+                                    <p class="text-muted">Last Purchase</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script>
+        function downloadTicket(ticketId) {
+            alert('Download functionality for ticket #' + ticketId + ' would be implemented here.');
+            // Example: window.location.href = '@Url.Action("DownloadTicket", "Dashboard")?id=' + ticketId;
+        }
+
+        // Add hover effects
+        $(document).ready(function () {
+            $('.ticket-card').hover(
+                function () {
+                    $(this).css({
+                        'box-shadow': '0 4px 8px rgba(0,0,0,0.15)',
+                        'transform': 'translateY(-2px)'
+                    });
+                },
+                function () {
+                    $(this).css({
+                        'box-shadow': '',
+                        'transform': 'translateY(0)'
+                    });
+                }
+            );
+        });
+    </script>
+
+    <style>
+        .ticket-card {
+            transition: all 0.3s ease;
+        }
+
+        @@media (max-width: 768px) {
+            .col-md-6 {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+}

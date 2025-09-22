@@ -58,6 +58,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -116,6 +117,12 @@
       <Private>True</Private>
       <HintPath>packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="zxing, Version=0.16.10.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>packages\ZXing.Net.0.16.10\lib\net47\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation, Version=0.16.10.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>packages\ZXing.Net.0.16.10\lib\net47\zxing.presentation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
@@ -129,16 +136,53 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ManageEventsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202509180058173_InitialCreate.cs" />
+    <Compile Include="Migrations\202509180058173_InitialCreate.designer.cs">
+      <DependentUpon>202509180058173_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202509180059153_FixCartItemDateTime.cs" />
+    <Compile Include="Migrations\202509180059153_FixCartItemDateTime.designer.cs">
+      <DependentUpon>202509180059153_FixCartItemDateTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202509180102002_InitialSync.cs" />
+    <Compile Include="Migrations\202509180102002_InitialSync.designer.cs">
+      <DependentUpon>202509180102002_InitialSync.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\Cart.cs" />
+    <Compile Include="Models\CartItem.cs" />
+    <Compile Include="Models\CartItemSession.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\EventReportDto.cs" />
+    <Compile Include="Models\Invoice.cs" />
+    <Compile Include="Models\InvoiveItem.cs" />
+    <Compile Include="Models\OrganizerReportsViewModel.cs" />
+    <Compile Include="Models\Payment.cs" />
+    <Compile Include="Models\Promotion.cs" />
+    <Compile Include="Models\ReportDto.cs" />
     <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\TicketType.cs" />
     <Compile Include="Models\Ticket.cs" />
+    <Compile Include="Models\TicketViewModel.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\TicketSalesReportDto.cs" />
+    <Compile Include="Models\UserReportDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\DashboardService.cs" />
+    <Compile Include="Services\ManageEventsService.cs" />
+    <Compile Include="TikectsHub.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TikectsHub.dbml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\PasswordHelper.cs" />
+    <Compile Include="Utils\PaymentHelper.cs" />
     <Compile Include="Views\Account\Login.cshtml.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -151,11 +195,17 @@
     <Compile Include="Views\Account\Signup.cshtml.designer.cs">
       <DependentUpon>Signup.cshtml.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dashboard\AdminDashboard.cshtml.cs">
+    <Compile Include="Views\Dashboard\CartDashboard.cshtml.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Views\Dashboard\AdminDashboard.cshtml.designer.cs">
-      <DependentUpon>AdminDashboard.cshtml.cs</DependentUpon>
+    <Compile Include="Views\Dashboard\CartDashboard.cshtml.designer.cs">
+      <DependentUpon>CartDashboard.cshtml.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dashboard\EditCart.cshtml.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Dashboard\EditCart.cshtml.designer.cs">
+      <DependentUpon>EditCart.cshtml.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Dashboard\EventDetails.cshtml.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -169,14 +219,33 @@
     <Compile Include="Views\Dashboard\Index.cshtml.designer.cs">
       <DependentUpon>Index.cshtml.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dashboard\OrganizerDashboard.cshtml.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Dashboard\OrganizerDashboard.cshtml.designer.cs">
+      <DependentUpon>OrganizerDashboard.cshtml.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dashboard\StudentDashboard.cshtml.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Views\Dashboard\StudentDashboard.cshtml.designer.cs">
       <DependentUpon>StudentDashboard.cshtml.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\ManageEvents\Index.cshtml.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\ManageEvents\Index.cshtml.designer.cs">
+      <DependentUpon>Index.cshtml.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Shared\_AuthLayout.cshtml.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Shared\_AuthLayout.cshtml.designer.cs">
+      <DependentUpon>_AuthLayout.cshtml.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\app-theme.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -219,8 +288,27 @@
     <Content Include="Views\Account\Signup.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Dashboard\StudentDashboard.cshtml" />
-    <Content Include="Views\Dashboard\AdminDashboard.cshtml" />
     <Content Include="Views\Dashboard\EventDetails.cshtml" />
+    <Content Include="Views\Shared\_AuthLayout.cshtml" />
+    <Content Include="Views\Dashboard\CartDashboard.cshtml" />
+    <Content Include="Views\Dashboard\OrganizerDashboard.cshtml" />
+    <Content Include="Views\ManageEvents\Index.cshtml" />
+    <Content Include="Views\ManageEvents\EventManagement.cshtml" />
+    <Content Include="Views\ManageEvents\ViewAttendees.cshtml" />
+    <Content Include="Views\ManageEvents\CreateEvent.cshtml" />
+    <Content Include="TikectsHub.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>TikectsHub.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="TikectsHub.dbml.layout">
+      <DependentUpon>TikectsHub.dbml</DependentUpon>
+    </Content>
+    <Content Include="Views\Dashboard\EditCart.cshtml" />
+    <Content Include="Views\Dashboard\MyTickets.cshtml" />
+    <Content Include="Views\Shared\OrganizerLayout.cshtml" />
+    <Content Include="Views\ManageEvents\Edit.cshtml" />
+    <Content Include="Views\ManageEvents\Reports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -237,6 +325,20 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202509180058173_InitialCreate.resx">
+      <DependentUpon>202509180058173_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509180059153_FixCartItemDateTime.resx">
+      <DependentUpon>202509180059153_FixCartItemDateTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202509180102002_InitialSync.resx">
+      <DependentUpon>202509180102002_InitialSync.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

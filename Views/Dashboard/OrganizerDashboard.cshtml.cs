@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace TicketAppMVC.Views.Dashboard
 {
-    public partial class AdminDashboard : System.Web.UI.Page
+    public partial class OrganizerDashboard : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
